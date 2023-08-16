@@ -1,27 +1,30 @@
 # Open LDAP on OpenSUSE
 
-This repository has some useful shell scripts, a LDIF file and a Python 3 CGI script which will
-allow an Open LDAP server to be set up quicklt on OpenSUSE Leaf version 15.5
+This repository has some useful shell scripts, a LDIF file and a Python
+3 CGI script which will allow an Open LDAP server to be set up quickly
+on OpenSUSE Leaf version 15.5
 
 # ATTENTION!
 
-I am not an expert on LDAP. This README document and the various files in this repository
-may have incorrect or non-standard values.
+I am not an expert on LDAP. This README document and the various files
+in this repository may have incorrect or non-standard values.
 
-My main motivation was to get a LDAP server up and running so devices
-on a network (e.g. Raritan intelligent PDUs) can be configured to use LDAP.
+My main motivation was to get a LDAP server up and running so devices on
+a network (e.g. Raritan intelligent PDUs) can be configured to use LDAP
+for demonstration purposes.
 
-If you need to set up a LDAP server in a production environment then DO NOT use this
-as the basis of your setup!
+If you need to set up a LDAP server in a production environment then DO
+NOT use this as the basis of your setup!
 
-On the other hand if you just want to get a simple LDAP up and running then read continue reading.
+On the other hand if you just want to get a simple LDAP up and running
+then continue reading.
 
 # Assumptions and default values
 
 This document makes the following assumptions and uses the following default values:
 
 + The OpenSUSE server has only one NIC (Network Interface Card)
-+ The OpenSUSE server has NOT been previosuly configured to run Open LDAP
++ The OpenSUSE server has NOT been previously configured to run Open LDAP
 + LDAP distinguished name dc=matrix,dc=lab will be used as the main organisation name
 + The LDAP environment will be unsecured and run on the default TCP port number 389
 + Secret password for configuration and LDAP access will be 'Only4Demos!' without the single quotes
@@ -235,11 +238,12 @@ result: 0 Success
 
 # Changing LDAP entries
 
-From this point existing entries could be modified or deleted. New entries can be added.
+From this point existing entries could be modified or deleted. New
+entries can be added.
 
-Use the command line utilities such as `ldapmodify` and `ldapadd` or consider using a LDAP directory browser.
-Just use your preferred internet search engine and search for "ldap browser". Plenty to choose from. such as
-LDAP Administrator available
+Use the command line utilities such as `ldapmodify` and `ldapadd` or
+consider using a LDAP directory browser.  Just use your preferred internet
+search engine and search for "ldap browser". Plenty to choose from.
 
 # Starting again
 
@@ -280,12 +284,7 @@ are several issues with it that could compromise system seurity. They include bu
 + The subprocess function is used in the script - this is like using the "system" call in C programs
 + Very limited error checking
 
-Yo uhave been warned!
+You have been warned!
 
-
-
-
-
-------------------------
-
-End of document
+----------------
+End of README.md
