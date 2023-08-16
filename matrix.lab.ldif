@@ -1,0 +1,56 @@
+dn: dc=matrix,dc=lab
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+dc: matrix
+o : matrix
+
+dn: ou=users,dc=matrix,dc=lab
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=roles,dc=matrix,dc=lab
+objectClass: organizationalUnit
+ou: roles
+
+dn: cn=Admin,ou=roles,dc=matrix,dc=lab
+objectclass: groupofnames
+cn: Admin
+description: Admin group
+member: uid=andyc,ou=users,dc=matrix,dc=lab
+
+dn: cn=Operator,ou=roles,dc=matrix,dc=lab
+objectclass: groupofnames
+cn: Operator
+description: Operator group
+member: uid=neila,ou=users,dc=matrix,dc=lab
+
+dn: cn=readonly,ou=roles,dc=matrix,dc=lab
+objectclass: groupofnames
+cn: readonly
+description: Read only group
+member: uid=dollyp,ou=users,dc=matrix,dc=lab
+
+dn: uid=andyc,ou=users,dc=matrix,dc=lab
+cn: Andy
+sn: Cranston
+objectClass: inetOrgPerson
+userPassword: passAAAA1
+uid: andyc
+memberOf: cn=Admin,ou=roles,dc=matrix,dc=lab
+
+dn: uid=neila,ou=users,dc=matrix,dc=lab
+cn: Neil
+sn: Armstrong
+objectClass: inetOrgPerson
+userPassword: passNNNN1
+uid: neila
+memberOf: cn=Operator,ou=roles,dc=matrix,dc=lab
+
+dn: uid=dollyp,ou=users,dc=matrix,dc=lab
+cn: Dolly
+sn: Parton
+objectClass: inetOrgPerson
+userPassword: passDDDD1
+uid: dollyp
+memberOf: cn=Operator,ou=roles,dc=matrix,dc=lab
