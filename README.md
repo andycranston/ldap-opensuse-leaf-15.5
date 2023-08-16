@@ -1,56 +1,54 @@
 # Open LDAP on OpenSUSE
 
-Running an open LDAP server on OpenSUSE Leaf 15.5.
+This repository has some useful shell scripts, a LDIF file and a Python 3 CGI script which will
+allow an Open LDAP server to be set up quicklt on OpenSUSE Leaf version 15.5
+
+# ATTENTION!
+
+I am not an expert on LDAP. This README document and the various files in this repository
+may have incorrect or non-standard values.
+
+My main motivation was to get a LDAP server up and running so devices
+on a network (e.g. Raritan intelligent PDUs) can be configured to use LDAP.
+
+If you need to set up a LDAP server in a production environment then DO NOT use this
+as the basis of your setup!
+
+On the other hand if you just want to get a simple LDAP up and running then read continue reading.
 
 # Assumptions and default values
 
 This document makes the following assumptions and uses the following default values:
 
-+ The LDAP server has only one NIC (Network Interface Card)
-+ The LDAP server has NOT been configured to run open LDAP in the past
-+ LDAP domain name "matrix.lab" (i.e. dc=matrix,dc=lab)
-+ Secret password for configuration and LDAP access: Broadbus1
++ The OpenSUSE server has only one NIC (Network Interface Card)
++ The OpenSUSE server has NOT been previosuly configured to run Open LDAP
++ LDAP distinguished name dc=matrix,dc=lab will be used as the main organisation name
++ The LDAP environment will be unsecured and run on the default TCP port number 389
++ Secret password for configuration and LDAP access will be 'Only4Demos!' without the single quotes
 + Manager name of "admin" (i.e. cn=admin,dc=matrix,dc=lab)
++ You have appropriate access to run priviledged commands using the `sudo` command
 
 
-# Get before file listings
-
-Run these commands:
-
-```
-cd
-sudo find / -type f -print | sort > files.b4
-sudo find / -type d -print | sort > dirs.b4
-sudo find / -type l -print | sort > symlinks.b4
-```
 
 # Install the packages
 
-The following command:
+Run the following command:
 
 ```
 sudo zypper install openldap2 openldap2-client openldap2-doc
 ```
 
-will install the openldap2 server, the openldap2-client programs (e.g. ldapsearch) and openldap2 documentation.
+to install the openldap2 server, the openldap2-client programs
+(e.g. ldapsearch) and openldap2 documentation.
 
-The openldap2-client programs may have been included when you initially installed the operating system. If that is
-the case then the `zypper` command will display a message.
+The openldap2-client programs may have been included when you initially
+installed the operating system. If that is the case then the `zypper`
+command will display a message.
 
-# Get after file listings
-
-Run these commands:
-
-```
-cd
-sudo find / -type f -print | sort > files.after
-sudo find / -type d -print | sort > dirs.after
-sudo find / -type l -print | sort > symlinks.after
-```
 
 # Edit the /etc/openldap/slapd.conf file
 
-Take a backup of the `/etc/openldap/slapd.conf` file:
+Create a backup of the `/etc/openldap/slapd.conf` file:
 
 ```
 cd /etc/openldap
@@ -106,7 +104,7 @@ rootpw       secret
 to read:
 
 ```
-rootpw       Broadbus1
+rootpw       "Only4Demos!"
 ```
 
 Save changes.
@@ -160,17 +158,51 @@ If the networking configuration is more complicated than a default
 operating system installation with one NIC (Network Interface Card) then
 the above `firewall-cmd` command line might need additional arguments.
 
-# Display all the LDAP database content for dc=matrix,dc=lab
-
-Running this command:
+Now run the `supplement_ldap_database.sh` script:
 
 ```
-ldapsearch -D "cn=admin,dc=matrix,dc=lab" -w Broadbus1 -H ldap://localhost -b "dc=matrix,dc=lab" -s sub "(objectclass=*)"
+./supplement_ldap_database.sh
 ```
 
-on the OpenSUSE ldap server will display all LDAP entries in and under dc=matrix,dc=lab.
+Output will be similar to:
 
-Example output for no entries:
+```
+adding new entry "dc=matrix,dc=lab"
+adding new entry "ou=users,dc=matrix,dc=lab"
+adding new entry "ou=roles,dc=matrix,dc=lab"
+adding new entry "cn=Admin,ou=roles,dc=matrix,dc=lab"
+adding new entry "cn=Operator,ou=roles,dc=matrix,dc=lab"
+adding new entry "cn=readonly,ou=roles,dc=matrix,dc=lab"
+adding new entry "uid=andyc,ou=users,dc=matrix,dc=lab"
+adding new entry "uid=neila,ou=users,dc=matrix,dc=lab"
+adding new entry "uid=dollyp,ou=users,dc=matrix,dc=lab"
+```
+
+At this stage an unsecured LDAP server is now running.
+
+The details are:
+
++ Organisation "dc=matrix,dc=lab"
++ Organisational unit "ou=users,dc=matrix,dc=lab"
++ Organisational unit "ou=roles,dc=matrix,dc=lab"
++ Group of names "cn=Admin,ou=roles,dc=matrix,dc=lab"
++ Group of names "cn=Operator,ou=roles,dc=matrix,dc=lab"
++ Group of names "cn=readonly,ou=roles,dc=matrix,dc=lab"
++ InetOrgPerson "uid=andyc,ou=users,dc=matrix,dc=lab" with password "passAAAA1" and member of "cn=Admin,ou=roles,dc=matrix,dc=lab"
++ InetOrgPerson "uid=neila,ou=users,dc=matrix,dc=lab" with password "passNNNN1" and member of "cn=Operator,ou=roles,dc=matrix,dc=lab"
++ InetOrgPerson "uid=dollyp,ou=users,dc=matrix,dc=lab" with password "passDDDD1" adnd member of "cn=readonly,ou=roles,dc=matrix,dc=lab"
+
+# Prove access is ok
+
+From another host on the network that has the `ldapsearch` command run a command line similar to:
+
+```
+ldapsearch -D "cn=admin,dc=matrix,dc=lab" -w "Only4Demos!" -H ldap://192.168.1.80 -b "dc=matrix,dc=lab" -s sub "(objectclass=*)"
+```
+
+Change the IP address `192.168.1.80` to the IP address of the LDAP server.
+
+If access is ok the first few lines of the `ldapsearch` command output will be:
 
 ```
 # extended LDIF
@@ -181,135 +213,78 @@ Example output for no entries:
 # requesting: ALL
 #
 
-# search result
-search: 2
-result: 32 No such object
-
-# numResponses: 1
-```
-
-# Set up minimal dc=matrix,dc=lab entries
-
-Obtain a copy of the file:
-
-```
-matrix.lab.ldif
-```
-
-Run this command:
-
-```
-ldapadd -x -D cn=admin,dc=matrix,dc=lab -w Broadbus1 -f matrix.lab.ldif
-```
-
-A successful run should display output similar to:
-
-```
-adding new entry "dc=matrix,dc=lab"
-adding new entry "ou=users,dc=matrix,dc=lab"
-adding new entry "ou=roles,dc=matrix,dc=lab"
-adding new entry "cn=admin,ou=roles,dc=matrix,dc=lab"
-adding new entry "cn=full,ou=roles,dc=matrix,dc=lab"
-adding new entry "cn=readonly,ou=roles,dc=matrix,dc=lab"
-adding new entry "uid=andyc,ou=users,dc=matrix,dc=lab"
-adding new entry "uid=neila,ou=users,dc=matrix,dc=lab"
-adding new entry "uid=dollyp,ou=users,dc=matrix,dc=lab"
-```
-
-The LDAP database now has entries to allow it to be used for some very basic
-user authentication tests.
-
-# Delete database
-
-To delete the LDAP database and start again do the following:
-
-```
-sudo systemctl stop slapd.service
-sudo mv /var/lib/ldap/data.mdb /var/tmp
-sudo mv /var/lib/ldap/lock.mdb /var/tmp
-sudo systemctl start slapd.service
-sudo systemctl status slapd.service
-```
-
-ATTENTION: only delete the database if it has become corrupted 
-beyond repair.
-
-# Add a dummy organisational unit (OU) entry
-
-Create a file called:
-
-```
-ou_people.ldif
-```
-
-with the following content:
-
-```
-dn: dc=my-domain,dc=com
+# matrix.lab
+dn: dc=matrix,dc=lab
 objectClass: top
 objectClass: dcObject
 objectClass: organization
-dc: my-domain
-o : my-domain
-
-dn: ou=people,dc=my-domain,dc=com
-objectClass: organizationalUnit
-ou: people
+dc: matrix
+o: matrix
 ```
 
-Run the ldapadd command as follows:
+and the last few lines will be:
 
 ```
-ldapadd -x -D cn=Manager,dc=my-domain,dc=com -w secret -f ou_people.ldif
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 10
+# numEntries: 9
 ```
 
-Output should be:
+# Changing LDAP entries
+
+From this point existing entries could be modified or deleted. New entries can be added.
+
+Use the command line utilities such as `ldapmodify` and `ldapadd` or consider using a LDAP directory browser.
+Just use your preferred internet search engine and search for "ldap browser". Plenty to choose from. such as
+LDAP Administrator available
+
+# Starting again
+
+To set the LDAP database back to a known state run:
 
 ```
-adding new entry "dc=my-domain,dc=com"
-
-adding new entry "ou=people,dc=my-domain,dc=com"
+./delete_ldap_database.sh
+./supplement_ldap_database.sh
 ```
 
-Now run:
+The `delete_ldap_database.sh` script will likely prompt you for your password to enable sudo access.
+
+WARNING: This will delete all the current LDAP entries.
+
+# The ldapwebpass.py Python 3 CGI script
+
+The `ldapwebpass.py` Python 3 CGI script can be added to a web server which has CGI support enables, allows Python 3 programs to run under CGI
+and has access to the `ldappasswd` command. The web server also requires network access to the LDAP server via TCP port 389.
+
+After copying the script to the web server edit the script and change the line near the top of the script that begins:
 
 ```
-ldapsearch -D "cn=Manager,dc=my-domain,dc=com" -w secret -H ldap://localhost -b "dc=my-domain,dc=com" -s sub "(objectclass=*)"
+LDAP_IP =
 ```
 
-This command displays all the entries at and under `"dc=my-domain,dc=com"`.
+Change the line so it has the IP address of the LDAP server.
 
-# Start over
-
-Stop the slapd service:
+For example if the LDAP server is running on IP address `192.168.1.80` then change the line to read:
 
 ```
-sudo systemctl stop slapd.service
+LDAP_IP = '192.168.1.80'
 ```
 
-Disable the slapd service:
+WARNING: Only use the `ldapwebpass.py` script on test system. It is NOT suitable for production systems. There
+are several issues with it that could compromise system seurity. They include but are not limited to:
 
-```
-sudo systemctl disablep slapd.service
-```
++ The master bind password is stored in clear text in the script
++ The subprocess function is used in the script - this is like using the "system" call in C programs
++ Very limited error checking
 
-Clear out the MDB database:
-
-```
-sudo -s
-cd /var/lib/ldap
-mv data.mdb lock.mdb /var/tmp
-Ctrl^D
-```
+Yo uhave been warned!
 
 
-# Add TCP port 389 to firewall
 
-By default 
 
-```
-sudo firewall-cmd --zone=public --add-port=389/tcp --permanent
-```
 
 ------------------------
 
