@@ -155,11 +155,12 @@ port 389. Open up this port with
 
 ```
 sudo firewall-cmd --zone=public --add-port=389/tcp --permanent
+sudo firewall-cmd --reload
 ```
 
 If the networking configuration is more complicated than a default
 operating system installation with one NIC (Network Interface Card) then
-the above `firewall-cmd` command line might need additional arguments.
+the above `firewall-cmd` commands might need additional arguments.
 
 Now run the `supplement_ldap_database.sh` script:
 
