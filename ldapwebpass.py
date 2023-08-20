@@ -28,7 +28,7 @@ import subprocess
 LDAP_IP = '192.168.1.80'
 DC_BASE = 'dc=matrix,dc=lab'
 BIND_NAME = 'cn=admin' + ',' + DC_BASE
-BIND_PASS = 'Yilzwyfh8'
+BIND_PASS = 'Lmob5Wvnlh!'
 
 CSS = '''
 body {
