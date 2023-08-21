@@ -10,7 +10,7 @@ This is for a server running OpenSUSE Leaf 15.5 only.
 This document and the programs/files in the repositity make the following assumptions:
 
 + The OpenSUSE server has only one NIC (Network Interface Card)
-+ The OpenSUSE server has NOT been previously configured to run Open LDAP
++ The OpenSUSE server has NOT been previously configured to run OpenLDAP
 + You have appropriate access to run priviledged commands using the `sudo` command
 + The LDAP environment will be unsecured (no digital certificate) and will run on the default TCP port number 389
 
@@ -72,7 +72,7 @@ dc: matrix
 o: matrix
 ```
 
-and the last few lines should be:
+and the last few lines should be similar to:
 
 ```
 # search result
@@ -140,10 +140,13 @@ NOT use this as the basis of your setup!
 
 # The ldapwebpass.py Python 3 CGI script
 
-The `ldapwebpass.py` Python 3 CGI script can be added to a web server which has CGI support enables, allows Python 3 programs to run under CGI
-and has access to the `ldappasswd` command. The web server also requires network access to the LDAP server via TCP port 389.
+The `ldapwebpass.py` Python 3 CGI script can be added to a web server
+which has CGI support enabled, allows Python 3 programs to run under CGI
+and has access to the `ldappasswd` command. The web server also requires
+network access to the LDAP server via TCP port 389.
 
-After copying the script to the web server edit the script and change the line near the top of the script that begins:
+After copying the script to the web server edit the script and change
+the line near the top of the script that begins:
 
 ```
 LDAP_IP =
