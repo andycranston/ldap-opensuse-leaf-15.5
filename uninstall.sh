@@ -48,7 +48,7 @@ echo "Disabling slapd.service"
 sudo systemctl disable slapd.service
 
 echo "Removing LDAP packages"
-sudo zypper remove openldap2 openldap2-doc
+sudo --non-interactive zypper remove openldap2 openldap2-doc
 
 if [ -d /etc/openldap ]
 then
@@ -61,6 +61,12 @@ then
   echo "Moving /var/lib/ldap to /var/tmp"
   sudo mv /var/lib/ldap /var/tmp/var-lib-openldap.`date '+%s'`
 fi
+
+echo "Removing firewall port 389"
+sudo firewall-cmd --zone=public --remove-port=389/tcp --permanent
+
+echo "Reloading firewalld daemon"
+sudo firewall-cmd --reload
 
 echo "Finished"
 
