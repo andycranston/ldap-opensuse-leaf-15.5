@@ -48,7 +48,7 @@ echo "Disabling slapd.service"
 sudo systemctl disable slapd.service
 
 echo "Removing LDAP packages"
-sudo --non-interactive zypper remove openldap2 openldap2-doc
+sudo zypper --non-interactive remove openldap2 openldap2-doc
 
 if [ -d /etc/openldap ]
 then
