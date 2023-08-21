@@ -2,7 +2,7 @@
 #
 # @(!--#) @(#) install.sh, sversion 0.1.0, fversion, 21-august-2023
 #
-# install OpenLDAP from an OpenSUSE Leaf 15.5 server
+# install OpenLDAP on to an OpenSUSE Leaf 15.5 server
 #
 
 set -u
@@ -86,7 +86,7 @@ echo "$firstipv4"
 
 echo "Run this command from another host to test this LDAP server:"
 echo
-echo "  ldapsearch -D 'cn=admin,dc=matrix,dc=lab' -w 'Only4Demos!' -H ldap://$firstipv4 -b 'dc=matrix,dc=lab' -s sub '(objectclass=*)'"
+echo "  ldapsearch -D cn=admin,dc=matrix,dc=lab -w 'Only4Demos!' -H ldap://$firstipv4 -b dc=matrix,dc=lab -s sub '(objectclass=*)'"
 echo
 
 echo "Finished"
